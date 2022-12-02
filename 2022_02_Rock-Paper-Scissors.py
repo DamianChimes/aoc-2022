@@ -1,82 +1,41 @@
-# Part 1
-encrypted_strategy_guide = 'day/2/input.txt'
+# Day 2: Rock-Paper-Scissors
 
-opponent_move = {'A':'Rock', 'B': 'Paper', 'C': 'Scissors'}
-my_move = {'X':'Rock', 'Y': 'Paper', 'Z': 'Scissors'}
-move_points = {'Rock': 1, 'Paper': 2, 'Scissors': 3}
-round_points = {'Loss': 0, 'Draw': 3, 'Win': 6}
+def problem_1(f):
+    # Rock: 1, Paper: 2, Scissors: 3
+    round_results = []
+    for round in f.readlines():
+        moves = round.split()
+        opp_move, my_move = ('A','B','C').index(moves[0]), ('X', 'Y', 'Z').index(moves[1])
+        outcome = my_move - opp_move
 
-total_score = 0
+        # The modulo enables corrections for 0 - 2
+        round_score = (my_move+1) + ((outcome+1) % 3) * 3
+        round_results.append(round_score)
 
-with open(encrypted_strategy_guide, 'r') as f:
-    for line in f.readlines():
-        round_score = 0
-        moves = line.split()
+    return round_results
 
-        # Determine round outcome
-        if opponent_move[moves[0]] == my_move[moves[1]]:
-            outcome = 'Draw'
-        elif opponent_move[moves[0]] == 'Rock':
-            if my_move[moves[1]] == 'Paper':
-                outcome = 'Win'
-            else:
-                outcome = 'Loss'
+def problem_2(f):
+    round_results = []
+    for round in f.readlines():
+        plan = round.split()
+        opp_move, outcome = ('A','B','C').index(plan[0]), ('X', 'Y', 'Z').index(plan[1])
+        my_move = (opp_move + (outcome-1)) % 3
 
-        elif opponent_move[moves[0]] == 'Paper':
-            if my_move[moves[1]] == 'Scissors':
-                outcome = 'Win'
-            else:
-                outcome = 'Loss'
+        round_score = (my_move+1) + outcome*3
+        round_results.append(round_score)
 
-        elif opponent_move[moves[0]] == 'Scissors':
-            if my_move[moves[1]] == 'Rock':
-                outcome = 'Win'
-            else:
-                outcome = 'Loss'
+    return round_results
 
-        # Add scores
-        round_score = move_points[my_move[moves[1]]] + round_points[outcome]
-        total_score += round_score
+with open('day/2/input.txt', 'r') as f:
+    round_results_1 = problem_1(f)
 
-print('Round 1:', total_score)
+with open('day/2/input.txt', 'r') as f:
+    round_results_2 = problem_2(f)
 
-# Part 2
-my_result = {'X': 'Loss', 'Y': 'Draw', 'Z': 'Win'}
+# Problem 1:
+print('Round 1:', sum(round_results_1))
 
-total_score = 0
+# Problem 2:
+print('Round 2:', sum(round_results_2)) #11800 WRONG
 
-with open(encrypted_strategy_guide, 'r') as f:
-    for line in f.readlines():
-        round_score = 0
-        moves = line.split()
-
-        if my_result[moves[1]] == 'Draw':
-            round_score += move_points[opponent_move[moves[0]]]
-
-        elif my_result[moves[1]] == 'Win':
-            if opponent_move[moves[0]] == 'Rock':
-                round_score += move_points['Paper']
-            elif opponent_move[moves[0]] == 'Paper':
-                round_score += move_points['Scissors']
-            elif opponent_move[moves[0]] == 'Scissors':
-                round_score += move_points['Rock']
-            else:
-                print('Missed @ WIN')
-
-        elif my_result[moves[1]] == 'Loss':
-            if opponent_move[moves[0]] == 'Rock':
-                round_score += move_points['Scissors']
-            elif opponent_move[moves[0]] == 'Paper':
-                round_score += move_points['Rock']
-            elif opponent_move[moves[0]] == 'Scissors':
-                round_score += move_points['Paper']
-            else:
-                print('Missed @ Loss')
-        else:
-            print('Missed @ MyResult')
-
-        round_score += round_points[my_result[moves[1]]]
-        total_score += round_score
-
-print('Round 2:', total_score) #11800 WRONG
-
+# End
